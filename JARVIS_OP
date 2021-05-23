@@ -1,0 +1,167 @@
+
+import pyttsx3 #to convert your all speaking into a text
+import speech_recognition as sr #to reconnize speech
+import pywhatkit #to open youtube
+import pyjokes #to get some jokes
+import wikipedia
+import datetime #for current time
+import time #for time
+import webbrowser #to any website
+import os  #to open file loaction we use os
+import random
+print("hey user! you can this alexa to \n1: alexa play music\n2: \"alexa wikipedia of\" some person or \"who is\" some person\n3: alexa open youtube\n4: alexa open gmail\n5: alexa open googgle\n6: send whatsaap message\n7: alexa game\n8: alexa jokes\n9: alexa what is the time\n10: alexa what is your name\n11: alexa what is my name\n12: alexa stop(to end)")
+listener=sr.Recognizer()
+engine=pyttsx3.init() #intialalizing pyttsx3
+
+def talk(text):
+    engine.say(text) #to speak
+    engine.runAndWait() #to wait for user to speak
+
+def wish():
+    hour=datetime.datetime.now().hour #to see the current hour based on that wishing
+    if(hour>0 and hour<12):
+        talk("so..")
+        talk("lazy good morning sir")
+        talk("this is alexa here, how may i help you")
+    elif(hour>=12 and hour<=15):
+        talk("so..")
+        talk("lazy good afternoon sir")
+        talk("this is alexa here, how may i help you")
+    else:
+        talk("so..")
+        talk("lazy good evening sir")
+        talk("this is alexa here, how may i help you")
+
+
+def take_command():
+    try:
+        h=wish()
+        with sr.Microphone() as source: #triggers and open microphone
+            print("listening......")
+            voice=listener.listen(source)
+            command=listener.recognize_google(voice) #google speak engine is good so we use it
+            command=command.lower() #converting every text spoken into smaller case
+            if("alexa" in command ):
+                command=command.replace("alexa","") #replacing alexa to print command
+                print(command) #triggers only if alexa is there in speech
+    except:
+        pass
+    return command
+
+
+def run_alexa():
+    command=take_command()
+    if("play" in command):
+        song=command.replace("play","")
+        talk("playing"+ song)
+        pywhatkit.playonyt(song)
+    elif("joke" in command):
+        talk(pyjokes.get_joke())
+    elif("wikipedia" in command or "who is" in command):
+        if("wikipedia" in command):
+            wiki=command.replace("wikipedia","")
+            info=wikipedia.summary(wiki,2)
+            print(info)
+            talk(info)
+        elif("who is" in command):
+            person=command.replace("who is","")
+            data=wikipedia.summary(person,2)
+            print(data)
+            talk("according to wikipedia")
+            talk(data)
+
+    elif("time" in command):
+        time=datetime.datetime.now().strftime("%I:%M %p") #%I is for 1-12 timings if i make %H then it will take from 1-24
+        #M is for minute and #S is for second that we dint add but still to know about it
+        #p is for knowing is it am or pm
+        talk(f"the current time is {time}")
+        print(time)
+
+    elif("stop" in command):
+        talk("okay  sir")
+        talk("it was a good time with you")
+        talk("alexa is signing off bye bye")
+        exit()
+
+    elif("how are you" in command):
+        rand_ans=["i a am very good sir, how about you","pleasure, you asked about it, i am very good, and hope your doing well"]
+        b=random.sample(rand_ans,k=1)
+        talk(f"{b}")
+    elif("like" in command):
+        talk("i just like myself and nothing else")
+    elif("what is your name" in command or "who are you" in command):
+        rand_ans=["i am someone ,who is bored by, answering your question, any ways, i am alexa","i am your alexa, ready to help you all time, let me know if you need any help","you woked me up from sleep, for asking this, anyways i am alexa, but not a slave","i am cheap alexa, and i can do anything for you"]
+        b=random.sample(rand_ans,k=1)
+        talk(f"{b}")
+    elif("what is my name" in command):
+        talk("i am not very sure, but i had heard people calling you, the legend")
+        talk("and luckily we both are, talking")
+    elif("open youtube" in command):
+        op=command.replace("open","")
+        talk("opening"+ op)
+        webbrowser.open("youtube.com")
+    elif("open google" in command):
+        sp=command.replace("open","")
+        talk("opening"+sp)
+        webbrowser.open("google.com")
+    elif("open gmail" in command):
+        pp=command.replace("open","")
+        talk("opening"+pp)
+        webbrowser.open("gmail.com")
+    elif("open pycharm" in command):
+        address="C:\\Program Files\\JetBrains\\PyCharm Community Edition 2020.3\\bin\\pycharm64.exe"
+        talk("opening pycharm")
+        os.startfile(address)
+    elif("whatsapp" in command):
+        talk("type the whatsaap number, to whom u wanna send message ")
+        number=input("number: ")
+        talk("type the message below")
+        msg=input("type your msg: ")
+        storing_current_hour=datetime.datetime.now().hour #TAKING A USER INPUT FOR HOUR
+        storing_current_min=datetime.datetime.now().minute+1.5 #TAKING A USER INPUT FOR MINUTE
+        pywhatkit.sendwhatmsg(f"+91 {number}",f"{msg}",storing_current_hour,storing_current_min)
+        talk("you msg was succesfully..")
+
+    elif("maths" in command):
+        talk("write ur numbers below")
+        a=eval(input("write here: "))
+        talk(f"your answer is {a}")
+        print(a)
+
+    elif(" game" in command):
+        talk("getting bored, its okay,lets play something")
+        talk("there are number from 1 to 10, and you have to guess")
+        talk("which one i was thinking of")
+
+        gm=random.randint(1,10)
+        talk("okay now guess you number")
+        user=int(input("guess your number"))
+        if(user==gm):
+            talk("congratulation sir, your born genius")
+            print("correct")
+        else:
+            talk("you lost, try your luck next time")
+            talk(f"the number was {gm}")
+            print(f"the actual number was {gm}")
+    elif("reminder" in command or "remind me" in command):
+        talk("after how much minute i should remind you sir")
+        a=int(input("enter minute you need to be reminder for\n"))
+        talk("on what should i remind you of")
+        b=input("need for reminder")
+        tme=datetime.datetime.now().minute
+        tme=tme+a
+        talk(f"reminder is set for next {a} minute")
+
+
+    else:
+        talk("what the hell bro, be clear when u speak")
+        talk("now ,can u repeat the same again properly")
+
+
+while True:
+    run_alexa()
+    time.sleep(1)
+    talk("if u wanna stop me just say , alexa stop")
+    time.sleep(1)
+    talk("even though you know me now")
+    talk("but being a responsible person, i will give, my intro again")
